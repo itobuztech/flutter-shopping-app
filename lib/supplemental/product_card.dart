@@ -18,6 +18,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import '../model/app_state_model.dart';
 import '../model/product.dart';
+import '../colors.dart';
 
 class ProductCard extends StatelessWidget {
   ProductCard({this.imageAspectRatio: 33 / 49, this.product})
@@ -41,14 +42,67 @@ class ProductCard extends StatelessWidget {
       fit: BoxFit.cover,
     );
 
-    _setModel(child, model){
+    _openProductDetails() {
+      return Navigator.push(context, MaterialPageRoute<Null>(
+        builder: (BuildContext context) {
+          return Scaffold(
+              backgroundColor: fColorOrange,
+              appBar: AppBar(
+                title: const Text('Product Details'),
+                actions: <Widget>[],
+              ),
+              body: ListView(
+                shrinkWrap: true,
+                children: <Widget>[
+                  Center(
+                    child: Image.asset(
+                      product.assetName,
+                      package: product.assetPackage,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: 300.00,
+                    )
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(6.0),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(height: 4.0),
+                        Text(product.name, style: TextStyle(fontSize: 22.0)),
+                        SizedBox(height: 4.0),
+                        Text('Price : ${product.price}', style: TextStyle(fontSize: 18.0)),
+                        SizedBox(height: 4.0),
+                        Text('Description :${product.description}', style: TextStyle(fontSize: 16.0)),
+                      ],
+                    )
+                  ),
+                  SizedBox(height: 8.0),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(8.0, 0, 8.0, 6.0),
+                    child: RaisedButton(
+                      color: fColorBackgroundWhite,
+                      splashColor: fColorBrown900,
+                      child: Text('Add To Cart', style: TextStyle(color: Colors.black)),
+                      onPressed: () {
+                        model.addProductToCart(product.id);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  )
+                ],
+              ),
+          );
+        },
+        fullscreenDialog: true,
+      ));
+    }
+
+
+    _setModel(child, model) {
       this.model = model;
       return GestureDetector(
-        onTap: () {
-//          model.addProductToCart(product.id);
-          // TODO: Add Snackbar
-        },
-        child: child,
+        onTap: () => _openProductDetails(),
+        child: child
       );
     }
 
